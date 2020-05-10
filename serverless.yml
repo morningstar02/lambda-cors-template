@@ -1,0 +1,30 @@
+# serverless.yml
+
+service: corsIssueCheck
+
+provider:
+  name: aws
+  region: us-east-2
+  versionFunctions: false
+  runtime: nodejs12.x
+  memorySize: 128
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup,
+        - logs:CreateLogStream,
+        - logs:PutLogEvents,
+        - logs:DescribeLogStreams
+      Resource: "arn:aws:logs:*:*:*"
+  apiKeys:
+    - myFirstKey
+
+functions:
+  testAppForCors:
+    handler: prodapp.testAppForCors
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+          private: true
+          cors: true
